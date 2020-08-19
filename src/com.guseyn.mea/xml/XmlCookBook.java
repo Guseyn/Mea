@@ -12,19 +12,17 @@ public class XmlCookBook {
             if (root.name().equals(name)) {
                 allElements.add(root);
             }
-            root.children().forEach(element -> {
-                elementsByNamePushedToAllElements(element, name, allElements);
-            });
+            elementsByNamePushedToAllElements(root.children(), name, allElements);
         });
         return allElements;
     }
 
-    private static void elementsByNamePushedToAllElements(Element element, String name, List<Element> allElements) {
-        element.children().forEach(child -> {
-            if (child.name().equals(name)) {
-                allElements.add(child);
+    private static void elementsByNamePushedToAllElements(List<Element> elements, String name, List<Element> allElements) {
+        elements.forEach(element -> {
+            if (element.name().equals(name)) {
+                allElements.add(element);
             }
-            elementsByNamePushedToAllElements(child, name, allElements);
+            elementsByNamePushedToAllElements(element.children(), name, allElements);
         });
     }
 }
