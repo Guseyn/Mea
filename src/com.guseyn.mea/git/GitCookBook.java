@@ -31,7 +31,7 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
-public class GitCommands {
+public class GitCookBook {
     static File clone(File directory, String remoteLink) throws GitAPIException {
         Git.cloneRepository()
             .setURI(remoteLink)
