@@ -8,10 +8,16 @@ import java.util.stream.Collectors;
 import xml.XmlCookBook;
 
 public class PomCookBook {
-    static List<PomDependency> dependencies(XmlDocument pomXml) {
+    public static List<PomDependency> dependencies(XmlDocument pomXml) {
         return XmlCookBook.elementsByName(pomXml, "dependency").stream().map(
             PomCookBook::dependencyByCorrespondingXmlElement
         ).collect(Collectors.toList());
+    }
+
+    public static boolean areTwoPomDependenciesEqual(PomDependency firstPomDependency, PomDependency secondPomDependency) {
+        return firstPomDependency.groupId.equals(secondPomDependency.groupId) &&
+            firstPomDependency.artifactId.equals(secondPomDependency.artifactId) &&
+            firstPomDependency.version.equals(secondPomDependency.version);
     }
 
     private static PomDependency dependencyByCorrespondingXmlElement(Element element) {
