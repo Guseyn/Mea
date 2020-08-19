@@ -1,6 +1,8 @@
 package mine;
 
+import com.github.javaparser.ast.ImportDeclaration;
 import com.guseyn.broken_xml.XmlDocument;
+import j.JavaCookBook;
 import java.util.ArrayList;
 import java.util.List;
 import pom.PomCookBook;
@@ -25,5 +27,22 @@ public class MineCookBook {
             }
         }
         return newPomDependencies;
+    }
+
+    public static List<ImportDeclaration> newImportsInJavaCode(List<ImportDeclaration> previousImportsInJavaCode, List<ImportDeclaration> currentImportsInJavaCode) {
+        List<ImportDeclaration> newImportsInJavaCode = new ArrayList<>();
+        for (ImportDeclaration currentImportInJavaCode : currentImportsInJavaCode) {
+            boolean importIsAlsoInPreviousJavCode = false;
+            for (ImportDeclaration previousImportInJavaCode : previousImportsInJavaCode) {
+                if (JavaCookBook.areTwoImportDeclarationsEqual(previousImportInJavaCode, currentImportInJavaCode)) {
+                    importIsAlsoInPreviousJavCode = true;
+                    break;
+                }
+            }
+            if (!importIsAlsoInPreviousJavCode) {
+                newImportsInJavaCode.add(currentImportInJavaCode);
+            }
+        }
+        return newImportsInJavaCode;
     }
 }
