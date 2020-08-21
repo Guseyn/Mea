@@ -25,7 +25,7 @@ public class JavaCookBook {
         return parsedJavaCode(javaCode).getImports();
     }
 
-    public static boolean areTwoImportDeclarationsEqual(ImportDeclaration firstImportDeclaration, ImportDeclaration secondImportdeclaration) {
-        return firstImportDeclaration.getName().equals(secondImportdeclaration.getName()) && firstImportDeclaration.isStatic() == secondImportdeclaration.isStatic();
+    public static boolean areTwoImportDeclarationsEqual(ImportDeclaration firstImportDeclaration, ImportDeclaration secondImportDeclaration) {
+        return firstImportDeclaration.getName().equals(secondImportDeclaration.getName()) && firstImportDeclaration.isStatic() == secondImportDeclaration.isStatic();
     }
 }
