@@ -1,10 +1,12 @@
 package git;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.guseyn.broken_xml.ParsedXML;
 import com.guseyn.broken_xml.XmlDocument;
 import io.reflectoring.diffparser.api.DiffParser;
 import io.reflectoring.diffparser.api.UnifiedDiffParser;
 import io.reflectoring.diffparser.api.model.Diff;
+import j.JavaCookBook;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -91,22 +93,30 @@ public class GitCookBook {
         return contentDiffs;
     }
 
-    static Pair<String, String> pomContentBeforeAndNowInCommit (File repoFolder, RevCommit commit, String pomPath) throws IOException {
+    static Pair<String, String> fileContentBeforeAndNowInCommit(File repoFolder, RevCommit commit, String filePath) throws IOException {
         try (Git git = Git.open(repoFolder)) {
             Repository repository = git.getRepository();
             String commitName = commit.getName();
             String prevCommitName = commitName + "^";
-            String pomContentBefore = contentFromFileInCommit(repository, prevCommitName, pomPath);
-            String pomContentNow = contentFromFileInCommit(repository, commitName, pomPath);
-            return new Pair<>(pomContentBefore, pomContentNow);
+            String fileContentBefore = contentFromFileInCommit(repository, prevCommitName, filePath);
+            String fileContentNow = contentFromFileInCommit(repository, commitName, filePath);
+            return new Pair<>(fileContentBefore, fileContentNow);
         }
     }
 
-    static Pair<XmlDocument, XmlDocument> pomContentAsParsedXmlDocumentBeforeAndNowInCommit (File repoFolder, RevCommit commit, String pomPath) throws IOException {
-        Pair<String, String> pomContentBeforeAndNowInCommit = pomContentBeforeAndNowInCommit(repoFolder, commit, pomPath);
+    static Pair<XmlDocument, XmlDocument> parsedXmlDocumentBeforeAndNowInCommit(File repoFolder, RevCommit commit, String pomPath) throws IOException {
+        Pair<String, String> pomContentBeforeAndNowInCommit = fileContentBeforeAndNowInCommit(repoFolder, commit, pomPath);
         return new Pair<>(
             new ParsedXML(pomContentBeforeAndNowInCommit.getKey()).document(),
             new ParsedXML(pomContentBeforeAndNowInCommit.getValue()).document()
+        );
+    }
+
+    static Pair<CompilationUnit, CompilationUnit> parsedJavaCodeBeforeAndNowInCommit(File repoFolder, RevCommit commit, String javaFilePath) throws IOException {
+        Pair<String, String> javaContentBeforeAndNowInCommit = fileContentBeforeAndNowInCommit(repoFolder, commit, javaFilePath);
+        return new Pair<>(
+            JavaCookBook.parsedJavaCode(javaContentBeforeAndNowInCommit.getKey()),
+            JavaCookBook.parsedJavaCode(javaContentBeforeAndNowInCommit.getValue())
         );
     }
 
