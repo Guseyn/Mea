@@ -5,6 +5,7 @@ import com.guseyn.broken_xml.XmlDocument;
 import j.JavaCookBook;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import pom.PomCookBook;
 import pom.PomDependency;
 
@@ -48,5 +49,14 @@ public class MineCookBook {
 
     public static String wrappedJavaStatements(String javaStatements) {
         return String.format("package com.wrap;\nclass WrapClass { void wrapMethod() { %s } }", javaStatements);
+    }
+
+    public static String wrappedJavaStatements(String javaStatements, List<ImportDeclaration> importDeclarations) {
+        return String.format(
+            "package wrapper;\n\n%s\nclass WrapClass { void wrapMethod() { %s } }",
+            importDeclarations.stream().map(
+                importDeclaration -> (importDeclaration.isStatic() ? "import " : "import static ").concat(importDeclaration.getName().asString())
+            ).collect(Collectors.joining(";\n")).concat(";\n"), javaStatements
+        );
     }
 }
