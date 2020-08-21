@@ -1,0 +1,9 @@
+package com.wrap;
+
+import com.lib.SomeClass;
+
+class WrapClass {
+    void wrapMethod() {
+        return new SomeClass.someMethod(a, c, d, e);
+    }
+}

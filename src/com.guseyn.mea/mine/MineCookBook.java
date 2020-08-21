@@ -45,4 +45,8 @@ public class MineCookBook {
         }
         return newImportsInJavaCode;
     }
+
+    public static String wrappedJavaStatements(String javaStatements) {
+        return String.format("package com.wrap;\nclass WrapClass { void wrapMethod() { %s } }", javaStatements);
+    }
 }
