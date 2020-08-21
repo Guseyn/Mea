@@ -1,5 +1,7 @@
 package git;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.guseyn.broken_xml.XmlDocument;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class GitCookBookTest {
-    private static File localRepo = new File("resources/broken-xml");
+    private static File localRepo = new File("tpm-resources/broken-xml");
 
     @BeforeAll
     static void init() throws GitAPIException {
@@ -48,7 +50,7 @@ class GitCookBookTest {
     void pomContentBeforeAndNowInCommitTest() throws IOException, GitAPIException {
         List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
         String pathOfChangedPomFile = GitCookBook.changedFilesInCommit(localRepo, commits.get(1)).get(0).getNewPath();
-        Pair<String, String> pomContentBeforeAndNow = GitCookBook.pomContentBeforeAndNowInCommit(
+        Pair<String, String> pomContentBeforeAndNow = GitCookBook.fileContentBeforeAndNowInCommit(
             localRepo,
             commits.get(1),
             pathOfChangedPomFile
@@ -58,16 +60,29 @@ class GitCookBookTest {
     }
 
     @Test
-    void pomContentAsParsedXmlDocumentBeforeAndNowInCommitTest() throws IOException, GitAPIException {
+    void parsedXmlDocumentBeforeAndNowInCommitTest() throws IOException, GitAPIException {
         List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
         String pathOfChangedPomFile = GitCookBook.changedFilesInCommit(localRepo, commits.get(1)).get(0).getNewPath();
-        Pair<XmlDocument, XmlDocument> pomContentBeforeAndNow = GitCookBook.pomContentAsParsedXmlDocumentBeforeAndNowInCommit(
+        Pair<XmlDocument, XmlDocument> parsedXmlDocumentBeforeAndNowInCommit = GitCookBook.parsedXmlDocumentBeforeAndNowInCommit(
             localRepo,
             commits.get(1),
             pathOfChangedPomFile
         );
-        assertTrue(pomContentBeforeAndNow.getKey().roots().size() > 0);
-        assertTrue(pomContentBeforeAndNow.getValue().roots().size() > 0);
+        assertTrue(parsedXmlDocumentBeforeAndNowInCommit.getKey().roots().size() > 0);
+        assertTrue(parsedXmlDocumentBeforeAndNowInCommit.getValue().roots().size() > 0);
+    }
+
+    @Test
+    void parsedJavaCodeBeforeAndNowInCommitTest() throws IOException, GitAPIException {
+        List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
+        String pathOfChangedPomFile = GitCookBook.changedFilesInCommit(localRepo, commits.get(5)).get(1).getNewPath();
+        Pair<CompilationUnit, CompilationUnit> parsedJavaCodeBeforeAndNowInCommit = GitCookBook.parsedJavaCodeBeforeAndNowInCommit(
+            localRepo,
+            commits.get(1),
+            pathOfChangedPomFile
+        );
+        assertTrue(parsedJavaCodeBeforeAndNowInCommit.getKey().getChildNodes().get(4) instanceof ClassOrInterfaceDeclaration);
+        assertTrue(parsedJavaCodeBeforeAndNowInCommit.getValue().getChildNodes().get(4) instanceof ClassOrInterfaceDeclaration);
     }
 
     @AfterAll

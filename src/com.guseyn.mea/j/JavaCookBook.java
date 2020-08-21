@@ -9,7 +9,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import java.util.List;
 
 public class JavaCookBook {
-    public static List<ImportDeclaration> importsFromJavaCode(String javaCode) {
+    public static CompilationUnit parsedJavaCode(String javaCode) {
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
         combinedTypeSolver.add(new ReflectionTypeSolver());
 
@@ -18,8 +18,11 @@ public class JavaCookBook {
         StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
 
         // Parse some code
-        CompilationUnit cu = StaticJavaParser.parse(javaCode);
-        return cu.getImports();
+        return StaticJavaParser.parse(javaCode);
+    }
+
+    public static List<ImportDeclaration> importsFromJavaCode(String javaCode) {
+        return parsedJavaCode(javaCode).getImports();
     }
 
     public static boolean areTwoImportDeclarationsEqual(ImportDeclaration firstImportDeclaration, ImportDeclaration secondImportdeclaration) {
