@@ -59,4 +59,15 @@ public class MineCookBook {
             ).collect(Collectors.joining(";\n")).concat(";\n"), javaStatements
         );
     }
+
+    public static String contentFromLineToLine(String content, int start, int count) {
+        String[] lines = content.split("\n");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+            if (lineNumber > start - 1 && lineNumber < start + count - 1) {
+                stringBuilder.append(lines[lineNumber]).append("\n");
+            }
+        }
+        return stringBuilder.toString();
+    }
 }
