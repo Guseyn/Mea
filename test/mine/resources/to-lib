@@ -1,0 +1,10 @@
+package wrapper;
+
+import com.to-lib.ToLib;
+import com.to-lib.ToLibResult;
+
+class WrapClass {
+    ToLibResult wrapMethod() {
+        return new ToLib(x, y, z).toMethod(a, b, c);
+    }
+}

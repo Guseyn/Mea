@@ -4,6 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.google.common.collect.Lists;
 import com.guseyn.broken_xml.ParsedXML;
 import com.guseyn.broken_xml.XmlDocument;
+import gumtree.spoon.AstComparator;
 import io.reflectoring.diffparser.api.DiffParser;
 import io.reflectoring.diffparser.api.UnifiedDiffParser;
 import io.reflectoring.diffparser.api.model.Diff;
@@ -36,6 +37,8 @@ import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import spoon.Launcher;
+import spoon.reflect.declaration.CtClass;
 
 public class GitCookBook {
     static File clone(File directory, String remoteLink) throws GitAPIException {
@@ -179,6 +182,21 @@ public class GitCookBook {
             JavaCookBook.parsedJavaCode(javaContentBeforeAndNowInCommit.getKey()),
             JavaCookBook.parsedJavaCode(javaContentBeforeAndNowInCommit.getValue())
         );
+    }
+
+    static Pair<CtClass, CtClass> spoonedJavaCodeBeforeAndNowInCommit(File repoFolder, RevCommit commit, String oldJavaFilePath, String newJavaFilePath) throws IOException {
+        Pair<String, String> javaContentBeforeAndNowInCommit = fileContentBeforeAndNowInCommit(repoFolder, commit, oldJavaFilePath, newJavaFilePath);
+        return new Pair<>(
+            Launcher.parseClass(javaContentBeforeAndNowInCommit.getKey()),
+            Launcher.parseClass(javaContentBeforeAndNowInCommit.getValue())
+        );
+    }
+
+    public static gumtree.spoon.diff.Diff spoonedDiffForCodeBeforeAndAfterInCommit(
+        Pair<CtClass, CtClass> spoonedJavaCodeBeforeAndNowInCommit) {
+        CtClass spoonedJavaCodeBefore = spoonedJavaCodeBeforeAndNowInCommit.getKey();
+        CtClass spoonedJavaCodeAfter = spoonedJavaCodeBeforeAndNowInCommit.getValue();
+        return new AstComparator().compare(spoonedJavaCodeBefore, spoonedJavaCodeAfter);
     }
 
     static String contentFromFileInCommit(Repository repository, String commitName, String filePath) throws IOException {

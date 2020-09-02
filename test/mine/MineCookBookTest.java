@@ -2,10 +2,18 @@ package mine;
 
 import com.guseyn.broken_xml.ParsedXML;
 import fs.FsCookBook;
+import git.GitCookBook;
 import j.JavaCookBook;
 import java.io.IOException;
+import java.util.List;
+import javafx.util.Pair;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.revwalk.RevCommit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import spoon.Launcher;
+import spoon.reflect.declaration.CtClass;
 
 public class MineCookBookTest {
     @Test
@@ -52,6 +60,18 @@ public class MineCookBookTest {
                     JavaCookBook.importsFromJavaCode(currentJavaCode)
                 )
             ).getImports().size()
+        );
+    }
+
+    @Test
+    void spoonedDiffForJavaCodeBeforeAndAfterMigration() throws IOException, GitAPIException {
+        String fromLibCode = FsCookBook.contentOfFile("test/mine/resources/from-lib");
+        String toLibCode = FsCookBook.contentOfFile("test/mine/resources/to-lib");
+        GitCookBook.spoonedDiffForCodeBeforeAndAfterInCommit(
+            new Pair<>(
+                Launcher.parseClass(fromLibCode),
+                Launcher.parseClass(toLibCode)
+            )
         );
     }
 }
