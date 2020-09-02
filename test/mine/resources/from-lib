@@ -1,0 +1,10 @@
+package wrapper;
+
+import com.from-lib.FromLib;
+import com.from-lib.FromLibResult;
+
+class WrapClass {
+    FromLibResult wrapMethod() {
+        return new FromLib(x, y, z).fromMethod(a, b, c);
+    }
+}

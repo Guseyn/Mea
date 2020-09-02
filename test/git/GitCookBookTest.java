@@ -12,10 +12,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import spoon.reflect.declaration.CtClass;
 
 class GitCookBookTest {
     private static File localRepo = new File("tpm-resources/broken-xml");
@@ -71,6 +73,21 @@ class GitCookBookTest {
     }
 
     @Test
+    void javaContentBeforeAndNowInCommitTest() throws IOException, GitAPIException {
+        List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
+        RevCommit commit = commits.get(2);
+        DiffEntry changedPomFile = GitCookBook.changedFilesInCommit(localRepo, commit).get(0);
+        Pair<String, String> javaContentBeforeAndNow = GitCookBook.fileContentBeforeAndNowInCommit(
+            localRepo,
+            commit,
+            changedPomFile.getOldPath(),
+            changedPomFile.getNewPath()
+        );
+        assertNotNull(javaContentBeforeAndNow.getKey());
+        assertNotNull(javaContentBeforeAndNow.getValue());
+    }
+
+    @Test
     void parsedXmlDocumentBeforeAndNowInCommitTest() throws IOException, GitAPIException {
         List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
         DiffEntry changedPomFile = GitCookBook.changedFilesInCommit(localRepo, commits.get(1)).get(0);
@@ -87,15 +104,45 @@ class GitCookBookTest {
     @Test
     void parsedJavaCodeBeforeAndNowInCommitTest() throws IOException, GitAPIException {
         List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
-        DiffEntry changedJavaFile = GitCookBook.changedFilesInCommit(localRepo, commits.get(5)).get(1);
+        RevCommit commit = commits.get(5);
+        DiffEntry changedJavaFile = GitCookBook.changedFilesInCommit(localRepo, commit).get(1);
         Pair<CompilationUnit, CompilationUnit> parsedJavaCodeBeforeAndNowInCommit = GitCookBook.parsedJavaCodeBeforeAndNowInCommit(
             localRepo,
-            commits.get(1),
+            commit,
             changedJavaFile.getOldPath(),
             changedJavaFile.getNewPath()
         );
         assertTrue(parsedJavaCodeBeforeAndNowInCommit.getKey().getChildNodes().get(4) instanceof ClassOrInterfaceDeclaration);
         assertTrue(parsedJavaCodeBeforeAndNowInCommit.getValue().getChildNodes().get(4) instanceof ClassOrInterfaceDeclaration);
+    }
+
+    @Test
+    void spoonedJavaCodeBeforeAndNowInCommitTest() throws IOException, GitAPIException {
+        List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
+        RevCommit commit = commits.get(5);
+        DiffEntry changedJavaFile = GitCookBook.changedFilesInCommit(localRepo, commit).get(1);
+        Pair<CtClass, CtClass> parsedJavaCodeBeforeAndNowInCommit = GitCookBook.spoonedJavaCodeBeforeAndNowInCommit(
+            localRepo,
+            commit,
+            changedJavaFile.getOldPath(),
+            changedJavaFile.getNewPath()
+        );
+        assertNotNull(parsedJavaCodeBeforeAndNowInCommit.getKey());
+        assertNotNull(parsedJavaCodeBeforeAndNowInCommit.getValue());
+    }
+
+    @Test
+    void spoonedDiffForJavaCodeBeforeAndNowInCommitTest() throws IOException, GitAPIException {
+        List<RevCommit> commits = GitCookBook.allCommitsInRepo(localRepo);
+        RevCommit commit = commits.get(5);
+        DiffEntry changedJavaFile = GitCookBook.changedFilesInCommit(localRepo, commit).get(1);
+        Pair<CtClass, CtClass> parsedJavaCodeBeforeAndNowInCommit = GitCookBook.spoonedJavaCodeBeforeAndNowInCommit(
+            localRepo,
+            commit,
+            changedJavaFile.getOldPath(),
+            changedJavaFile.getNewPath()
+        );
+        GitCookBook.spoonedDiffForCodeBeforeAndAfterInCommit(parsedJavaCodeBeforeAndNowInCommit);
     }
 
     @AfterAll
