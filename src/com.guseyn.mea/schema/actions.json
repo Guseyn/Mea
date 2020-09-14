@@ -1,0 +1,29 @@
+[
+  {
+    "type": "ADD",
+    "where": "in imports",
+    "desc": "import org.apache.commons.lang3.StringUtils"
+  },
+  {
+    "type": "ADD",
+    "where": "before classes",
+    "desc": "@Entity"
+  },
+  {
+    "type": "REMOVE",
+    "where": "before classes",
+    "desc": "@Entity"
+  },
+  {
+    "type": "REPLACE",
+    "where": "in methods",
+    "desc_from": "new Clazz(com.from.class.ArgFrom1 $1, com.from.class.ArgFrom2 $2, com.from.class.ArgFrom3 $3).toString(String)",
+    "desc_to": "new Clazz(com.to.class.ArgTo1 $1, com.from.class.ArgFrom2 $2, com.from.class.ArgFrom3 $3).asString(String)"
+  },
+  {
+    "type": "REPLACE",
+    "where": "in methods",
+    "desc_from": "new Clazz(com.from.class.ArgFrom1 $1, method1(com.from.class.ArgFrom2) $2, com.from.class.ArgFrom3 $3).toString(String)",
+    "desc_to": "new Clazz(com.from.class.ArgFrom1 $1, method2(com.from.class.ArgFrom3) $3).toString(String)"
+  }
+]
