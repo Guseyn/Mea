@@ -6,6 +6,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class JavaCookBook {
     }
 
     public static List<JavaStatement> statementsFromPieceOfJavaCodeWithImports(String javaCode) {
+        List<JavaStatement> statements = new ArrayList<>();
         List<String> linesOfCode = Arrays.asList(javaCode.split("\n"));
         return null;
     }
