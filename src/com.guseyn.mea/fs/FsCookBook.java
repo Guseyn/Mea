@@ -10,4 +10,8 @@ public class FsCookBook {
             new File(path), "UTF-8"
         );
     }
+
+    public static void writeFile(String path, String content) throws IOException {
+        FileUtils.write(new File(path), content, "UTF8");
+    }
 }
